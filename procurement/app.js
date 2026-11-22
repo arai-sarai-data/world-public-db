@@ -11,7 +11,7 @@ const dict = {
     shareText: '同じ品目なのに役所によって単価が何倍も違う。政府調達の単価ばらつきランキング',
     m1: '出典はコロンビア政府調達庁（Colombia Compra Eficiente）が datos.gov.co で公開する発注書データです。各発注書の品目欄から数量と金額を読み取り、単価＝金額÷数量で計算しています。',
     m2: '品目の説明文と単位が同じものを同じ品目として扱います。説明文は公開データの時点で途中までしか載っていないため、容量や仕様の違う商品が同じ品目に入ることがあります。差が50倍を超える品目は単位や仕様の違いの可能性が高いため、印を付けて下に並べています。',
-    m3: '15回以上購入され、5つ以上の役所が買っている品目のみが対象です。税・送料・手数料の行と、1,000ペソ未満の単価（セット品の内訳）は除外しています。',
+    m3: '15回以上購入され、5つ以上の役所が買っている品目のみが対象です。税・送料・手数料の行と、1,000ペソ未満の単価（セット品の内訳）は除外しています。人件費・予算枠・ライセンスなどのサービスも対象外で、個数・箱・リットルなどで数えられる物品だけを比べています。',
     m4: '単価が高いことは、それだけで不正を意味しません。配送地域、納期、数量の違いなど正当な理由がありえます。気になる取引は発注書の原本を確認してください。',
   },
   en: {
@@ -24,7 +24,7 @@ const dict = {
     shareText: 'Same item, prices many times apart across agencies. Government procurement price-gap ranking',
     m1: 'Source: purchase orders published by Colombia Compra Eficiente on datos.gov.co. Quantity and amount are parsed from each order’s item field; unit price = amount ÷ quantity.',
     m2: 'Lines with the same description and unit are treated as the same item. Descriptions are truncated in the open data, so products of different sizes may share an item. Items with spreads above 50× are likely unit or specification mismatches; they are flagged and listed last.',
-    m3: 'Only items bought at least 15 times by at least 5 agencies. Tax, freight and fee lines, and unit prices below 1,000 pesos (bundle components), are excluded.',
+    m3: 'Only items bought at least 15 times by at least 5 agencies. Tax, freight and fee lines, and unit prices below 1,000 pesos (bundle components), are excluded. Services such as staff, budgets and licences are also excluded; only goods counted in units, boxes, litres and similar are compared.',
     m4: 'A high price alone does not prove wrongdoing. Delivery region, deadlines or quantity can justify differences. Check the original order before drawing conclusions.',
   },
   zh: {
@@ -37,7 +37,7 @@ const dict = {
     shareText: '同一物品，各机关采购单价相差数倍：政府采购单价差距排行',
     m1: '来源为哥伦比亚政府采购署（Colombia Compra Eficiente）在datos.gov.co公开的采购订单数据。从订单的物品栏读取数量和金额，单价＝金额÷数量。',
     m2: '描述和单位相同的行视为同一物品。公开数据中的描述被截断，规格不同的商品可能被归为同一物品。差距超过50倍的物品很可能是单位或规格不同，已加标记并排在后面。',
-    m3: '仅包括被至少5个机关采购15次以上的物品。税费、运费、手续费行以及低于1,000比索的单价（套装组成部分）已排除。',
+    m3: '仅包括被至少5个机关采购15次以上的物品。税费、运费、手续费行以及低于1,000比索的单价（套装组成部分）已排除。人工、预算额度、许可证等服务也不在对象之内，只比较以个、箱、升等计量的物品。',
     m4: '单价高本身并不证明存在不当行为。配送地区、交期或数量不同都可能是合理原因。下结论前请核对订单原件。',
   },
   es: {
@@ -50,7 +50,7 @@ const dict = {
     shareText: 'Mismo artículo, precios muy distintos entre entidades. Ranking de diferencias en compras públicas',
     m1: 'Fuente: órdenes de compra publicadas por Colombia Compra Eficiente en datos.gov.co. Se extraen cantidad y valor del campo de ítems; precio unitario = valor ÷ cantidad.',
     m2: 'Las líneas con la misma descripción y unidad se tratan como el mismo artículo. Las descripciones están truncadas en los datos abiertos, por lo que productos de distinto tamaño pueden compartir artículo. Los artículos con diferencias mayores a 50× probablemente tienen unidades o especificaciones distintas; se marcan y se listan al final.',
-    m3: 'Solo artículos comprados al menos 15 veces por al menos 5 entidades. Se excluyen líneas de impuestos, fletes y comisiones, y precios unitarios menores a 1.000 pesos (componentes de paquetes).',
+    m3: 'Solo artículos comprados al menos 15 veces por al menos 5 entidades. Se excluyen líneas de impuestos, fletes y comisiones, y precios unitarios menores a 1.000 pesos (componentes de paquetes). También se excluyen servicios como personal, presupuestos y licencias; solo se comparan bienes contados en unidades, cajas, litros y similares.',
     m4: 'Un precio alto no prueba por sí solo una irregularidad. La región de entrega, los plazos o la cantidad pueden justificar diferencias. Revisa la orden original antes de sacar conclusiones.',
   },
 };
