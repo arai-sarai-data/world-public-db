@@ -18,7 +18,7 @@ Eight sites that bring scattered public data into one comparable place, in Japan
 ## 仕組み / How it works
 
 - `lib/*.mjs` が各データ源から取得・集計し、`data/*.json` を作ります（Node 20 以上）。
-- GitHub Actions（`.github/workflows/update.yml`）が毎週月曜に全データを更新し、`scripts/check.mjs` で異常値を確認してから GitHub Pages に公開します。取得に失敗したデータ源は前回のファイルをそのまま使います。
+- GitHub Actions（`.github/workflows/update.yml`）が毎週月曜に全データを更新して `scripts/check.mjs` で異常値を確認し、`deploy.yml` が GitHub Pages に公開します。取得に失敗したデータ源は前回のファイルをそのまま使います。
 - 各サイトは静的なHTMLとJavaScriptだけで動きます。
 
 ```bash
