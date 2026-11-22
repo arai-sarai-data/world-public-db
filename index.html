@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>世界の公共データベース</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: masthead + "start here" strip + filterable 2-col proposal cards + shared principles. Atlas/field-report feel. */
+  --paper:#f3f4f0;
+  --card:#ffffff;
+  --ink:#15212a;
+  --muted:#5a6670;
+  --line:#d6dbd4;
+  --accent:#0c6a62;
+  --accent-soft:#e1efec;
+  --signal:#a9711a;
+  --signal-soft:#f6ecd9;
+  --display:"Archivo","IBM Plex Sans JP","Hiragino Sans","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --body:"IBM Plex Sans","IBM Plex Sans JP","Hiragino Sans","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e1418;--card:#151e24;--ink:#e4eae7;--muted:#95a2a9;--line:#26333b;
+    --accent:#56bdb0;--accent-soft:#16312f;--signal:#e2aa4c;--signal-soft:#33281a;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e1418;--card:#151e24;--ink:#e4eae7;--muted:#95a2a9;--line:#26333b;
+  --accent:#56bdb0;--accent-soft:#16312f;--signal:#e2aa4c;--signal-soft:#33281a;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.mast{border-bottom:1px solid var(--line);padding:28px 0 26px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.langs{display:flex;gap:4px;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--card)}
+.langs button{border:0;background:transparent;padding:5px 12px;border-radius:999px;cursor:pointer;font-size:14px;color:var(--muted)}
+.langs button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,4.4vw,46px);line-height:1.15;margin:22px 0 12px;text-wrap:balance;letter-spacing:-.01em}
+.lead{max-width:68ch;color:var(--muted);margin:0;font-size:17px}
+
+section{padding:30px 0}
+h2{font-family:var(--display);font-size:22px;margin:0 0 14px;text-wrap:balance}
+.start{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.start a{display:block;text-decoration:none;color:var(--ink);background:var(--signal-soft);border:1px solid transparent;border-left:4px solid var(--signal);border-radius:8px;padding:14px 16px}
+.start a:hover{border-color:var(--signal)}
+.start .step{font-size:13px;font-weight:600;color:var(--signal)}
+.start .t{font-weight:700;font-size:17px;margin:2px 0}
+.start .why{font-size:14px;color:var(--muted)}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.filters button{border:1px solid var(--line);background:var(--card);padding:6px 14px;border-radius:999px;cursor:pointer;font-size:14px}
+.filters button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 22px;display:flex;flex-direction:column;gap:12px;scroll-margin-top:16px}
+.card:target{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.chead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.num{font-family:var(--display);font-weight:800;font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pill{font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.card h3{font-family:var(--display);font-size:21px;line-height:1.3;margin:0;text-wrap:balance}
+.card h3 small{display:block;font-family:var(--body);font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.02em;margin-top:2px}
+.tag{margin:0;font-weight:500}
+dl{margin:0;display:grid;gap:10px}
+dt{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+dd{margin:2px 0 0;font-size:15px}
+.srcs{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.srcs span{font-size:12.5px;border:1px solid var(--line);border-radius:4px;padding:1px 7px;color:var(--muted)}
+.mvp{background:var(--paper);border-radius:6px;padding:10px 12px;font-size:14.5px}
+.mvp b{color:var(--signal)}
+.open{display:inline-block;align-self:flex-start;background:var(--accent);color:var(--paper);text-decoration:none;font-weight:600;padding:8px 16px;border-radius:6px}
+.open:hover{filter:brightness(1.1)}
+.meters{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:1px solid var(--line);padding-top:12px}
+.meter{font-size:13px;color:var(--muted)}
+.dots{display:flex;gap:4px;margin-top:4px}
+.dots i{width:22px;height:6px;border-radius:3px;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.meter.f .dots i.on{background:var(--signal)}
+
+.principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;padding:0;margin:0;list-style:none}
+.principles li{border-top:2px solid var(--ink);padding-top:10px}
+.principles b{display:block;margin-bottom:2px}
+.principles span{color:var(--muted);font-size:14.5px}
+footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);font-size:13.5px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media (max-width:420px){.grid{grid-template-columns:1fr}.card{padding:18px 16px}}
+</style>
+</head>
+<body>
+<header class="mast">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="kicker" id="kicker"></div>
+      <div class="langs" role="group" aria-label="Language" id="langs"></div>
+    </div>
+    <h1 id="h1"></h1>
+    <p class="lead" id="lead"></p>
+  </div>
+</header>
+<main class="wrap">
+  <section aria-labelledby="startH">
+    <h2 id="startH"></h2>
+    <div class="start" id="start"></div>
+  </section>
+  <section aria-labelledby="allH" style="padding-top:6px">
+    <h2 id="allH"></h2>
+    <div class="filters" id="filters" role="group"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+  <section aria-labelledby="prinH">
+    <h2 id="prinH"></h2>
+    <ul class="principles" id="principles"></ul>
+  </section>
+</main>
+<footer><div class="wrap"><span id="foot"></span> <a href="https://github.com/arai-sarai-data/world-public-db">GitHub</a></div></footer>
+
+<script>
+const LANGS=[["ja","日本語"],["en","English"],["zh","中文"],["es","Español"]];
+
+const UI={
+ ja:{kicker:"公共データベース構想 · 8案",h1:"世界を変える可能性がある、公共のデータベースとサイト",
+  lead:"すでに公開されているのに、散らばっていて誰も比べていないデータがあります。それを1か所に集め、比べられる形にするだけで、隠れていた問題が見えるようになります。ここでは、一人でも始められて、世界中の人が母語で使える8つの案をまとめました。",
+  startH:"まず作るならこの順番",allH:"8つの案",prinH:"すべての案に共通するルール",
+  all:"すべて",problem:"いま何が問題か",build:"何を作るか",why:"なぜ世界が変わるのか",src:"主なデータ源",mvp:"いま見られるデータ",open:"サイトを開く",feas:"作りやすさ",impact:"インパクト",
+  steps:["1番目","2番目","3番目"],
+  foot:"案の内容は2026年11月時点の構想です。データ源の利用条件は、作る前に各提供元で確認してください。"},
+ en:{kicker:"Public database proposals · 8 ideas",h1:"Public databases and sites that could change the world",
+  lead:"Some data is already public, yet scattered and never compared. Bringing it into one place in a comparable form is often enough to expose problems that were hidden in plain sight. These eight ideas can be started by one person and used by people everywhere in their own language.",
+  startH:"If you build one first, go in this order",allH:"The eight ideas",prinH:"Rules shared by every idea",
+  all:"All",problem:"The problem",build:"What to build",why:"Why it could change the world",src:"Main data sources",mvp:"What you can see now",open:"Open the site",feas:"Ease of building",impact:"Impact",
+  steps:["Start here","Second","Third"],
+  foot:"These are proposals as of November 2026. Check each provider’s terms of use before building."},
+ zh:{kicker:"公共数据库构想 · 8个方案",h1:"有可能改变世界的公共数据库与网站",
+  lead:"有些数据早已公开，却分散各处，从来没有人把它们放在一起比较。只要把它们集中起来、变成可比较的形式，原本被忽视的问题就会浮现。这里整理了8个一个人也能起步、全世界的人都能用母语使用的方案。",
+  startH:"如果要先做，建议按这个顺序",allH:"8个方案",prinH:"所有方案共同遵守的规则",
+  all:"全部",problem:"现在的问题",build:"要做什么",why:"为什么能改变世界",src:"主要数据来源",mvp:"现在可以看到的数据",open:"打开网站",feas:"实现难易度",impact:"影响力",
+  steps:["第一个","第二个","第三个"],
+  foot:"以上为2026年11月的构想。开发前请向各数据提供方确认使用条款。"},
+ es:{kicker:"Propuestas de bases de datos públicas · 8 ideas",h1:"Bases de datos y sitios públicos que podrían cambiar el mundo",
+  lead:"Hay datos que ya son públicos, pero están dispersos y nadie los compara. Reunirlos en un solo lugar y en un formato comparable suele bastar para sacar a la luz problemas ocultos. Estas ocho ideas puede empezarlas una sola persona, y cualquiera puede usarlas en su propio idioma.",
+  startH:"Si vas a construir una primero, sigue este orden",allH:"Las ocho ideas",prinH:"Reglas comunes a todas las ideas",
+  all:"Todas",problem:"El problema",build:"Qué construir",why:"Por qué podría cambiar el mundo",src:"Fuentes de datos principales",mvp:"Lo que ya puedes ver",open:"Abrir el sitio",feas:"Facilidad",impact:"Impacto",
+  steps:["Primero","Segundo","Tercero"],
+  foot:"Propuestas a noviembre de 2026. Revisa las condiciones de uso de cada proveedor antes de construir."}
+};
+
+const THEMES={
+ health:{ja:"健康",en:"Health",zh:"健康",es:"Salud"},
+ money:{ja:"お金と権力",en:"Money & power",zh:"金钱与权力",es:"Dinero y poder"},
+ climate:{ja:"気候・環境",en:"Climate & nature",zh:"气候与环境",es:"Clima y naturaleza"},
+ aid:{ja:"人道支援",en:"Humanitarian aid",zh:"人道援助",es:"Ayuda humanitaria"},
+ knowledge:{ja:"知識・制度",en:"Knowledge & laws",zh:"知识与制度",es:"Conocimiento y leyes"}
+};
+
+const IDEAS=[
+{id:"retraction-ripple",site:"retractions",code:"Retraction Ripple",theme:"knowledge",feas:5,impact:4,
+ src:["Retraction Watch Database (via Crossref)","OpenAlex","Crossref API","PubMed"],
+ ja:{t:"撤回論文の波及マップ",tag:"撤回されたはずの論文が、今も引用され続けていないか。",
+  p:"不正や誤りで撤回された論文が、撤回後も引用され続け、後続の研究や診療ガイドラインに入り込んでいます。",
+  b:"撤回論文のデータと引用のつながりを結び、撤回後に引用した論文・分野・国を可視化します。研究者が自分の参考文献を貼るだけで撤回論文を警告するチェッカーも付けます。",
+  w:"誤った知識の連鎖を、論文を書く段階で止められます。査読者・編集者・学生が無料で使える「科学の安全装置」になります。",
+  m:"被引用数上位の撤回論文の「撤回後の引用数」ランキングと、DOIを貼るだけの参考文献チェッカー。"},
+ en:{t:"Retraction Ripple Map",tag:"Are retracted papers still being cited?",
+  p:"Papers retracted for misconduct or error keep being cited after retraction, and they seep into later research and clinical guidelines.",
+  b:"Link retraction data to the citation graph and show which papers, fields and countries cited a paper after it was retracted. Add a checker: paste your reference list and it flags retracted papers.",
+  w:"It stops chains of false knowledge at the moment a paper is written. A free safety net for science, usable by reviewers, editors and students.",
+  m:"A ranking of the most-cited retracted papers by citations after retraction, plus a checker for your own DOIs."},
+ zh:{t:"撤稿论文波及图",tag:"已撤稿的论文，是否仍在被引用？",
+  p:"因造假或错误而被撤稿的论文，在撤稿后仍被持续引用，并渗入后续研究和临床指南。",
+  b:"把撤稿数据与引用关系连接起来，展示撤稿后仍在引用的论文、领域和国家。另附检查工具：粘贴参考文献即可提示撤稿论文。",
+  w:"在写论文的阶段就截断错误知识的传播链，成为审稿人、编辑和学生都能免费使用的“科学安全装置”。",
+  m:"高被引撤稿论文的“撤稿后被引次数”排行，以及粘贴DOI即可使用的参考文献检查器。"},
+ es:{t:"Mapa de propagación de artículos retractados",tag:"¿Se siguen citando artículos ya retractados?",
+  p:"Artículos retractados por fraude o error siguen citándose después de la retractación y se filtran en investigaciones y guías clínicas posteriores.",
+  b:"Conectar los datos de retractaciones con la red de citas y mostrar qué artículos, áreas y países citaron un trabajo después de retractarse. Incluye un verificador: pegas tu bibliografía y señala los retractados.",
+  w:"Corta la cadena de conocimiento erróneo en el momento de escribir. Una red de seguridad gratuita para la ciencia, útil para revisores, editores y estudiantes.",
+  m:"Ranking de los artículos retractados más citados según sus citas tras la retractación, y un verificador de DOI."}},
+
+{id:"trial-gap",site:"trials",code:"Trial Gap",theme:"health",feas:4,impact:5,
+ src:["ClinicalTrials.gov API","WHO ICTRP","EU CTIS","jRCT","PubMed"],
+ ja:{t:"消えた臨床試験トラッカー",tag:"終わったはずの臨床試験、その結果はどこへ。",
+  p:"登録された臨床試験の多くが、終了後も結果を公表していません。都合の悪い結果が埋もれると、医師も患者も偏った証拠で治療を選ぶことになります。",
+  b:"世界の試験登録簿を横断し、終了後に結果が出ていない試験を、スポンサー（製薬企業・大学）・国・疾患別にランキングします。試験ごとに「終了から何日経過」を表示します。",
+  w:"公表率が名指しで見えると、公表しない理由がなくなります。類似の取り組みでは公表率の改善が報告されており、多言語化で対象を全世界に広げられます。",
+  m:"ClinicalTrials.govの第2〜4相・終了済み試験について、スポンサーごとの結果登録率ランキング。"},
+ en:{t:"Missing Trials Tracker",tag:"The trial ended. Where are the results?",
+  p:"Many registered clinical trials never publish results after they finish. When unfavourable results disappear, doctors and patients choose treatments based on skewed evidence.",
+  b:"Search trial registries worldwide and rank finished trials without results by sponsor (drug companies, universities), country and disease. Show “days since completion” for each trial.",
+  w:"When reporting rates are visible by name, there is no excuse left. Similar trackers have been followed by better reporting, and a multilingual version can cover the whole world.",
+  m:"Results-posting rates by sponsor for completed phase 2–4 trials on ClinicalTrials.gov."},
+ zh:{t:"消失的临床试验追踪器",tag:"试验已经结束，结果去哪了？",
+  p:"大量已注册的临床试验在结束后从未公布结果。不利的结果被埋没，医生和患者只能依据有偏差的证据选择治疗。",
+  b:"跨越全球试验注册库，按申办方（药企、大学）、国家和疾病，对结束后未公布结果的试验进行排名，并显示每项试验“结束后已过天数”。",
+  w:"当公布率被点名公开，就再也没有不公布的理由。类似项目推出后公布率有所改善，多语言化可以把范围扩展到全球。",
+  m:"ClinicalTrials.gov上已完成的2–4期试验，按申办方统计的结果登记率排行。"},
+ es:{t:"Rastreador de ensayos desaparecidos",tag:"El ensayo terminó. ¿Dónde están los resultados?",
+  p:"Muchos ensayos clínicos registrados nunca publican sus resultados al terminar. Cuando los resultados desfavorables desaparecen, médicos y pacientes eligen tratamientos con evidencia sesgada.",
+  b:"Recorrer los registros de ensayos de todo el mundo y clasificar los ensayos terminados sin resultados por patrocinador (farmacéuticas, universidades), país y enfermedad, mostrando los “días desde la finalización”.",
+  w:"Cuando la tasa de publicación es visible con nombre propio, no quedan excusas. Iniciativas similares han ido seguidas de mejoras, y una versión multilingüe puede cubrir el mundo entero.",
+  m:"Tasas de publicación de resultados por patrocinador para ensayos de fase 2–4 completados en ClinicalTrials.gov."}},
+
+{id:"pledge-check",site:"climate",code:"Pledge Check",theme:"climate",feas:4,impact:4,
+ src:["Climate TRACE","EDGAR","UNFCCC NDC Registry","Net Zero Tracker","Our World in Data"],
+ ja:{t:"気候公約と実排出のズレ計",tag:"「ネットゼロ宣言」は、本当に排出を減らしているか。",
+  p:"国や企業の脱炭素宣言は増えましたが、実際の排出が宣言どおり減っているかを1か所で確かめる手段がほとんどありません。",
+  b:"宣言（目標年・削減率）と、衛星や推計による実際の排出量を同じグラフに重ね、目標に必要なペースとのズレを「何年遅れているか」で表示します。",
+  w:"約束と現実の差が誰にでも分かる一つの数字になれば、有権者・投資家・報道が同じ物差しで責任を問えます。",
+  m:"G20とEUの実質ゼロ目標に対し、最近10年の排出の減り方が必要なペースの何%かを計算。"},
+ en:{t:"Climate Pledge Gap Meter",tag:"Are “net zero” pledges actually cutting emissions?",
+  p:"Climate pledges by countries and companies keep multiplying, but there is almost no single place to check whether real emissions are falling as promised.",
+  b:"Overlay each pledge (target year, reduction rate) on satellite-based and estimated real emissions, and express the gap from the required pace as “years behind”.",
+  w:"Turning the gap between promise and reality into one number anyone understands lets voters, investors and journalists hold everyone to the same yardstick.",
+  m:"For the G20 and the EU: what share of the pace needed for net zero the last 10 years of emissions achieved."},
+ zh:{t:"气候承诺与实际排放差距计",tag:"“净零承诺”真的在减少排放吗？",
+  p:"国家和企业的脱碳承诺越来越多，但几乎没有一个地方可以集中核实实际排放是否按承诺下降。",
+  b:"把承诺（目标年份、减排率）与卫星和估算得出的实际排放放在同一张图上，用“落后了几年”来表示与目标所需速度的差距。",
+  w:"当承诺与现实的差距变成人人都能理解的一个数字，选民、投资者和媒体就能用同一把尺子追究责任。",
+  m:"针对G20和欧盟：近10年排放下降速度达到了净零目标所需速度的百分之几。"},
+ es:{t:"Medidor de brecha climática",tag:"¿Las promesas de “cero neto” reducen de verdad las emisiones?",
+  p:"Los compromisos climáticos de países y empresas no paran de crecer, pero casi no existe un lugar único para comprobar si las emisiones reales bajan como se prometió.",
+  b:"Superponer cada compromiso (año objetivo, tasa de reducción) a las emisiones reales estimadas y por satélite, y expresar la brecha respecto al ritmo necesario en “años de retraso”.",
+  w:"Convertir la distancia entre promesa y realidad en un número que todos entienden permite a votantes, inversores y periodistas medir a todos con la misma vara.",
+  m:"Para el G20 y la UE: qué parte del ritmo necesario para el cero neto lograron las emisiones de los últimos 10 años."}},
+
+{id:"procure-price",site:"procurement",code:"Procure Price",theme:"money",feas:3,impact:5,
+ src:["Open Contracting Data Standard (OCDS)","EU TED","National procurement portals","CPV / UNSPSC codes"],
+ ja:{t:"同じ物、いくらで買った？",tag:"公共調達の単価を世界で比べる。",
+  p:"政府は同じ注射器・ノートPC・道路舗装に、国や自治体によって何倍も違う値段を払っています。比べる場がないため、割高な契約が見過ごされます。",
+  b:"公開された契約データの品目を国際分類コードにそろえ、単価の分布を表示します。中央値から大きく外れた契約に旗を立て、原本の契約書へリンクします。",
+  w:"税金の無駄と汚職の多くは「価格」に表れます。世界の相場が見えれば、どの国の担当者も市民も、その場で割高を指摘できます。",
+  m:"第1弾はコロンビア政府のオンライン調達店。同じ品目の単価の差と、高く買った発注書の原本リンク。"},
+ en:{t:"Same Item, What Price?",tag:"Compare public procurement unit prices worldwide.",
+  p:"Governments pay wildly different prices for the same syringes, laptops or road paving, depending on country or city. With nowhere to compare, overpriced contracts go unnoticed.",
+  b:"Map items in published contract data to international classification codes and show the unit-price distribution. Flag contracts far from the median and link to the original documents.",
+  w:"Much waste and corruption shows up in price. With a global reference price, officials and citizens anywhere can spot an overpriced deal on the spot.",
+  m:"First country: Colombia’s government online store. Unit-price gaps for the same item, with links to the original orders."},
+ zh:{t:"同样的东西，花了多少钱？",tag:"在全球比较政府采购单价。",
+  p:"同样的注射器、笔记本电脑或道路铺装，不同国家和地方政府支付的价格可能相差数倍。由于无处比较，高价合同往往被忽视。",
+  b:"把公开合同数据中的品目对应到国际分类代码，显示单价分布。对明显偏离中位数的合同做标记，并链接到合同原件。",
+  w:"大量浪费和腐败都体现在“价格”上。有了全球行情，任何国家的官员和市民都能当场指出价格过高。",
+  m:"第一个国家：哥伦比亚政府网上采购商城。同一物品的单价差距，并附订单原件链接。"},
+ es:{t:"Mismo producto, ¿a qué precio?",tag:"Comparar precios unitarios de compras públicas en todo el mundo.",
+  p:"Los gobiernos pagan precios muy distintos por las mismas jeringas, portátiles o pavimentos según el país o la ciudad. Sin un lugar para comparar, los contratos inflados pasan desapercibidos.",
+  b:"Asignar los artículos de los contratos publicados a códigos de clasificación internacionales y mostrar la distribución de precios unitarios. Marcar los contratos muy alejados de la mediana y enlazar al documento original.",
+  w:"Gran parte del despilfarro y la corrupción se nota en el precio. Con un precio de referencia mundial, funcionarios y ciudadanos pueden detectar un sobreprecio al instante.",
+  m:"Primer país: la Tienda Virtual del Estado Colombiano. Diferencias de precio por artículo, con enlace a las órdenes originales."}},
+
+{id:"aid-flow",site:"aid",code:"Aid Flow",theme:"aid",feas:4,impact:4,
+ src:["UN OCHA Financial Tracking Service (FTS)","IATI","OECD CRS","ReliefWeb"],
+ ja:{t:"約束された支援の行方",tag:"表明された援助は、いつ、いくら届いたか。",
+  p:"災害や紛争のたびに巨額の支援が表明されますが、実際に届いた金額と時期は追いにくく、約束だけで終わる分が見えません。",
+  b:"危機ごとに「表明額 → 拠出額 → 現地での実施」の流れを図で示し、まだ払われていない約束を支援国・機関別に一覧にします。",
+  w:"届かない約束が見えるようになると、支援国は約束を守る圧力を受け、現地の団体は資金不足を根拠を持って訴えられます。",
+  m:"国連OCHAの全支援計画について、必要額・到着額・未払いの約束を年ごとに比較。"},
+ en:{t:"Where Did the Aid Go?",tag:"Pledged aid: how much arrived, and when?",
+  p:"Every disaster and conflict brings large aid pledges, but it is hard to track how much actually arrived and when, so promises that never materialise stay invisible.",
+  b:"For each crisis, draw the flow from pledged to disbursed to delivered on the ground, and list unpaid pledges by donor country and agency.",
+  w:"When unkept promises are visible, donors face pressure to deliver, and local organisations can make evidence-based appeals about funding gaps.",
+  m:"Every UN OCHA response plan: money requested, received and pledged-but-unpaid, by year."},
+ zh:{t:"承诺的援助去哪了",tag:"宣布的援助，何时到位、到位多少？",
+  p:"每次灾害或冲突都会宣布巨额援助，但实际到位的金额和时间很难追踪，只停留在承诺的部分无人看见。",
+  b:"按危机展示“承诺金额 → 拨付金额 → 当地实施”的资金流，并按捐助国和机构列出尚未兑现的承诺。",
+  w:"未兑现的承诺一旦可见，捐助方就会面临兑现压力，当地组织也能有据可依地呼吁填补资金缺口。",
+  m:"联合国OCHA全部应对计划：按年份比较所需金额、到位金额和未兑现承诺。"},
+ es:{t:"¿Adónde fue la ayuda?",tag:"Ayuda prometida: cuánto llegó y cuándo.",
+  p:"Cada desastre o conflicto trae grandes promesas de ayuda, pero es difícil seguir cuánto llegó realmente y cuándo, y las promesas que nunca se cumplen quedan ocultas.",
+  b:"Para cada crisis, mostrar el flujo de lo prometido a lo desembolsado y a lo ejecutado sobre el terreno, y listar las promesas impagas por país donante y organismo.",
+  w:"Cuando las promesas incumplidas se ven, los donantes sienten presión para cumplir y las organizaciones locales pueden reclamar fondos con pruebas.",
+  m:"Todos los planes de respuesta de OCHA: lo solicitado, lo recibido y lo prometido sin pagar, por año."}},
+
+{id:"rights-atlas",site:"rights",code:"Rights Atlas",theme:"knowledge",feas:4,impact:4,
+ src:["World Bank Women, Business and the Law","ILO NATLEX / ILOSTAT","OECD Family Database","WHO Global Health Observatory"],
+ ja:{t:"制度の世界地図",tag:"自分の国の制度は、世界の中でどこにいるか。",
+  p:"育児休業、最低賃金、労働時間、相続や仕事での男女の扱いなど、暮らしを左右する制度は国ごとに大きく違います。比較情報は専門報告書に散らばり、多くの人が母語で読めません。",
+  b:"テーマごとに各国の制度を同じ指標でそろえ、多言語で比較・ランキングします。改正の履歴も時系列で追え、「どの国がいつ変えたか」が分かります。",
+  w:"他国で実現している制度を自分の言葉で知ることは、制度を変える議論の出発点になります。比べられることが、改革の一番の材料です。",
+  m:"第1弾は女性の権利。約190か国を「法律・支える仕組み・実態」の3層で比較し、法律だけの国を可視化。"},
+ en:{t:"Atlas of Rights and Rules",tag:"Where do your country’s laws stand in the world?",
+  p:"Rules that shape daily life, such as parental leave, minimum wage, working hours, and equal treatment in inheritance and work, differ hugely between countries. Comparisons sit in specialist reports most people cannot read in their own language.",
+  b:"Align each country’s rules on the same indicators by theme, then compare and rank them in many languages. Track reforms over time so you can see who changed what, and when.",
+  w:"Learning in your own language what other countries already guarantee is where debates about reform begin. Being comparable is the strongest material for change.",
+  m:"First theme: women’s legal rights. About 190 economies compared on law, support systems and practice."},
+ zh:{t:"制度世界地图",tag:"你的国家的制度，在世界上处于什么位置？",
+  p:"育儿假、最低工资、工作时间、继承和就业中的男女平等等影响生活的制度，各国差异巨大。比较信息分散在专业报告里，很多人无法用母语阅读。",
+  b:"按主题把各国制度统一到相同指标上，用多种语言进行比较和排名，并可按时间追踪修法历史，了解“哪个国家在何时改了什么”。",
+  w:"用自己的语言了解其他国家已经实现的制度，是推动改革讨论的起点。可以比较，本身就是改革最有力的材料。",
+  m:"第一个主题：女性权利。从法律、配套制度和实际执行三个层面比较约190个经济体。"},
+ es:{t:"Atlas de derechos y normas",tag:"¿Dónde están las leyes de tu país en el mundo?",
+  p:"Las normas que marcan la vida diaria, como permisos parentales, salario mínimo, jornada laboral e igualdad en herencias y empleo, varían enormemente entre países. Las comparaciones están en informes técnicos que mucha gente no puede leer en su idioma.",
+  b:"Alinear las normas de cada país con los mismos indicadores por tema, compararlas y ordenarlas en varios idiomas, y seguir las reformas en el tiempo para ver quién cambió qué y cuándo.",
+  w:"Saber en tu propio idioma lo que otros países ya garantizan es el punto de partida del debate sobre reformas. Poder comparar es el mejor argumento para cambiar.",
+  m:"Primer tema: derechos de las mujeres. Unas 190 economías comparadas en ley, sistemas de apoyo y práctica."}},
+
+{id:"forest-trace",site:"forests",code:"Forest Trace",theme:"climate",feas:3,impact:5,
+ src:["Global Forest Watch","Trase","UN Comtrade","FAOSTAT"],
+ ja:{t:"森を消した商品",tag:"あなたの国の輸入が、どこの森林を消しているか。",
+  p:"牛肉・大豆・パーム油・カカオ・コーヒーなど日常の商品が森林破壊とつながっていますが、消費者や投資家からはその経路が見えません。",
+  b:"森林消失の衛星データと貿易・サプライチェーンのデータを重ね、「どの国の、どの商品の輸入が、どの地域の森林消失と結びつくか」を地図で示します。",
+  w:"森林破壊の責任が輸入国の消費にもあることを、国ごと・商品ごとの数字で示せます。企業の調達方針や各国の規制づくりの根拠になります。",
+  m:"輸入を通じて他国の森林破壊に関わった面積の国別ランキング、原因商品、各国の森林の増減。"},
+ en:{t:"Products That Cleared the Forest",tag:"Which forests do your country’s imports clear?",
+  p:"Everyday goods such as beef, soy, palm oil, cocoa and coffee are linked to deforestation, but consumers and investors cannot see the supply route.",
+  b:"Overlay satellite forest-loss data with trade and supply-chain data, and map which country’s imports of which product connect to forest loss in which region.",
+  w:"It shows, country by country and product by product, that importing countries share responsibility for deforestation. That gives a basis for company sourcing policies and national regulation.",
+  m:"Countries ranked by deforestation embodied in imports, the products behind it, and each country’s forest change."},
+ zh:{t:"消灭森林的商品",tag:"你的国家的进口，正在让哪里的森林消失？",
+  p:"牛肉、大豆、棕榈油、可可、咖啡等日常商品与毁林相关，但消费者和投资者看不到其中的供应路径。",
+  b:"把森林消失的卫星数据与贸易和供应链数据叠加，用地图展示“哪个国家进口的哪种商品，与哪个地区的森林消失有关”。",
+  w:"用分国家、分商品的数字说明进口国的消费也对毁林负有责任，为企业采购方针和各国监管提供依据。",
+  m:"按进口所牵涉毁林面积的国家排行、致因商品，以及各国森林增减。"},
+ es:{t:"Productos que talaron el bosque",tag:"¿Qué bosques eliminan las importaciones de tu país?",
+  p:"Productos cotidianos como carne de res, soja, aceite de palma, cacao y café están ligados a la deforestación, pero consumidores e inversores no ven la ruta de suministro.",
+  b:"Superponer los datos satelitales de pérdida de bosque con datos de comercio y cadenas de suministro, y mostrar en un mapa qué importaciones de qué producto de qué país se vinculan a la deforestación de qué región.",
+  w:"Demuestra, país por país y producto por producto, que los países importadores comparten la responsabilidad. Sirve de base para políticas de compra de empresas y para la regulación.",
+  m:"Países según la deforestación incorporada en sus importaciones, los productos causantes y el cambio forestal de cada país."}},
+
+{id:"who-owns-it",site:"owners",code:"Who Owns It",theme:"money",feas:2,impact:5,
+ src:["Open Ownership Register (BODS)","UK Companies House PSC","OpenCorporates","OCDS","Political finance reports"],
+ ja:{t:"本当の持ち主",tag:"公共事業と献金の先にいる、最終的な受益者は誰か。",
+  p:"会社を何重にも重ねると、公共事業の受注者や政治献金の出し手の本当の持ち主が見えなくなります。汚職や資金洗浄はこの見えにくさを利用します。",
+  b:"実質的支配者の登録データ、企業登記、公共契約、政治資金の報告を名寄せし、「最終的に誰が得をしているか」を関係図で示します。",
+  w:"国境を越えた所有関係は一国の記者や市民では追い切れません。各国の公開データを一つの図につなぐことで、国際的な不正の構造が見えるようになります。",
+  m:"第1弾はスロバキアの公的登録簿。国と取引する会社のうち、公的な立場の人が持ち主の会社と罰金の記録。"},
+ en:{t:"Who Really Owns It",tag:"Who ultimately benefits behind public contracts and donations?",
+  p:"Layer companies on top of companies and the real owners of contractors and political donors disappear. Corruption and money laundering rely on that opacity.",
+  b:"Match beneficial-ownership registers, company registries, public contracts and political finance reports, and draw a network showing who ultimately benefits.",
+  w:"Cross-border ownership is beyond what any single country’s journalists or citizens can trace. Connecting public data from many countries in one graph reveals international schemes.",
+  m:"First country: Slovakia’s public register. Companies dealing with the state whose owners hold public office, and fines."},
+ zh:{t:"真正的所有者",tag:"公共工程和政治捐款背后，最终受益人是谁？",
+  p:"公司一层套一层，公共工程承包商和政治捐款人的真正所有者就看不见了。腐败和洗钱正是利用了这种不透明。",
+  b:"把实际控制人登记、企业登记、公共合同和政治资金报告进行名称匹配，用关系图展示“最终是谁得利”。",
+  w:"跨国的所有权关系，单靠一国的记者或市民无法追查到底。把各国公开数据连成一张图，国际性不当行为的结构就会显现。",
+  m:"第一个国家：斯洛伐克公共登记簿。与国家交易、由公职人员持有的公司及罚款记录。"},
+ es:{t:"¿Quién es el verdadero dueño?",tag:"¿Quién se beneficia al final de contratos públicos y donaciones?",
+  p:"Si se apilan empresas sobre empresas, desaparecen los verdaderos dueños de contratistas y donantes políticos. La corrupción y el lavado de dinero se apoyan en esa opacidad.",
+  b:"Cruzar registros de titularidad real, registros mercantiles, contratos públicos e informes de financiación política, y dibujar una red que muestre quién se beneficia al final.",
+  w:"La propiedad transfronteriza supera lo que periodistas o ciudadanos de un solo país pueden rastrear. Unir datos públicos de muchos países en un solo grafo revela esquemas internacionales.",
+  m:"Primer país: el registro público de Eslovaquia. Empresas que contratan con el Estado cuyos dueños ocupan cargos públicos, y multas."}}
+];
+
+const START=[
+ {id:"retraction-ripple",why:{ja:"無料APIだけで動き、一人で数日で形になる。",en:"Runs on free APIs alone; one person can ship it in days.",zh:"只用免费API即可运行，一个人几天就能做出雏形。",es:"Funciona solo con APIs gratuitas; una persona puede lanzarlo en días."}},
+ {id:"trial-gap",why:{ja:"データが整っていて、命に関わる問題に直結する。",en:"Clean data and a direct link to life-and-death decisions.",zh:"数据规整，直接关系到生命安全。",es:"Datos limpios y vínculo directo con decisiones de vida o muerte."}},
+ {id:"pledge-check",why:{ja:"世界共通の関心事で、多言語化の効果が最も大きい。",en:"A global concern where multiple languages matter most.",zh:"全球共同关注的话题，多语言化效果最大。",es:"Un tema mundial donde el multilingüismo rinde más."}}
+];
+
+const PRIN={
+ ja:[["原本に必ずリンク","すべての数字から、元の公開資料に1クリックで戻れるようにする。"],["計算方法を公開","集計や名寄せのルールを文章とコードで示し、誰でも検証できるようにする。"],["個人を晒さない","個人は公人・公開済みの役職の範囲だけ扱い、私人の情報は載せない。"],["多言語を前提に","画面の文言は言語ファイルに分け、翻訳ボランティアが追加できるようにする。"],["無料で誰でも","閲覧もデータのダウンロードも無料。データはオープンライセンスで再配布。"]],
+ en:[["Always link the source","Every number is one click away from the public document it came from."],["Publish the method","Document aggregation and matching rules in prose and code so anyone can verify them."],["Never expose private people","Cover individuals only as public figures or in published roles; leave private people out."],["Multilingual by design","Keep interface text in language files so volunteer translators can add languages."],["Free for everyone","Free to browse and download; data redistributed under an open licence."]],
+ zh:[["必附原始出处","每个数字都能一键回到其来源的公开资料。"],["公开计算方法","用文字和代码说明统计与匹配规则，任何人都能验证。"],["不曝光普通人","个人仅限公众人物或已公开的职务，不收录普通人的信息。"],["以多语言为前提","界面文字放在语言文件中，方便志愿译者添加新语言。"],["人人免费","浏览和下载数据都免费，数据以开放许可再发布。"]],
+ es:[["Enlazar siempre la fuente","Cada cifra está a un clic del documento público del que procede."],["Publicar el método","Explicar en texto y código las reglas de cálculo y cruce para que cualquiera las verifique."],["No exponer a particulares","Tratar a las personas solo como figuras públicas o en cargos publicados; dejar fuera a los particulares."],["Multilingüe desde el diseño","Separar los textos de la interfaz en archivos de idioma para que voluntarios añadan traducciones."],["Gratis para todos","Consulta y descarga gratuitas; datos redistribuidos con licencia abierta."]]
+};
+
+let lang="ja", theme="all";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dots=n=>'<span class="dots" aria-hidden="true">'+[1,2,3,4,5].map(i=>'<i class="'+(i<=n?"on":"")+'"></i>').join("")+"</span>";
+
+function render(){
+  const u=UI[lang];
+  document.documentElement.lang=lang==="zh"?"zh-Hans":lang;
+  $("kicker").textContent=u.kicker;$("h1").textContent=u.h1;$("lead").textContent=u.lead;
+  $("startH").textContent=u.startH;$("allH").textContent=u.allH;$("prinH").textContent=u.prinH;$("foot").textContent=u.foot;
+  $("langs").innerHTML=LANGS.map(([k,n])=>'<button type="button" id="lang-'+k+'" data-l="'+k+'" aria-pressed="'+(k===lang)+'">'+n+"</button>").join("");
+  $("start").innerHTML=START.map((s,i)=>{const d=IDEAS.find(x=>x.id===s.id);return '<a href="#'+d.id+'"><div class="step">'+u.steps[i]+'</div><div class="t">'+esc(d[lang].t)+'</div><div class="why">'+esc(s.why[lang])+"</div></a>"}).join("");
+  const keys=["all",...Object.keys(THEMES)];
+  $("filters").setAttribute("aria-label",u.all);
+  $("filters").innerHTML=keys.map(k=>'<button type="button" id="f-'+k+'" data-t="'+k+'" aria-pressed="'+(k===theme)+'">'+(k==="all"?u.all:THEMES[k][lang])+"</button>").join("");
+  $("grid").innerHTML=IDEAS.filter(d=>theme==="all"||d.theme===theme).map(d=>{
+    const c=d[lang],n=String(IDEAS.indexOf(d)+1).padStart(2,"0");
+    return '<article class="card" id="'+d.id+'">'+
+      '<div class="chead"><span class="num">'+n+" · "+esc(d.code)+'</span><span class="pill">'+THEMES[d.theme][lang]+"</span></div>"+
+      "<h3>"+esc(c.t)+"</h3>"+'<p class="tag">'+esc(c.tag)+"</p>"+
+      "<dl><div><dt>"+u.problem+"</dt><dd>"+esc(c.p)+"</dd></div>"+
+      "<div><dt>"+u.build+"</dt><dd>"+esc(c.b)+"</dd></div>"+
+      "<div><dt>"+u.why+"</dt><dd>"+esc(c.w)+"</dd></div>"+
+      "<div><dt>"+u.src+'</dt><dd><div class="srcs">'+d.src.map(s=>"<span>"+esc(s)+"</span>").join("")+"</div></dd></div></dl>"+
+      '<div class="mvp"><b>'+u.mvp+(lang==="ja"||lang==="zh"?"：":": ")+"</b>"+esc(c.m)+"</div>"+
+      '<a class="open" href="'+d.site+'/#'+lang+'">'+u.open+' →</a>'+
+      '<div class="meters"><div class="meter f">'+u.feas+" "+d.feas+"/5"+dots(d.feas)+'</div><div class="meter">'+u.impact+" "+d.impact+"/5"+dots(d.impact)+"</div></div>"+
+      "</article>"}).join("");
+  $("principles").innerHTML=PRIN[lang].map(([a,b])=>"<li><b>"+esc(a)+"</b><span>"+esc(b)+"</span></li>").join("");
+}
+$("langs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;lang=b.dataset.l;try{localStorage.setItem("wpdb-lang",lang)}catch(e){}location.hash=lang;render();});
+$("filters").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;theme=b.dataset.t;render();});
+function fromHash(){const h=location.hash.slice(1);if(UI[h]){lang=h;return true}return false}
+if(!fromHash()){let sv=null;try{sv=localStorage.getItem("wpdb-lang")}catch(e){}if(UI[sv])lang=sv;else{const nav=(navigator.language||"ja").slice(0,2);if(UI[nav])lang=nav;}}
+window.addEventListener("hashchange",()=>{if(fromHash())render();});
+render();
+const h=location.hash.slice(1);if(h&&!UI[h]){const el=document.getElementById(h);if(el)el.scrollIntoView();}
+</script>
+</body>
+</html>
